@@ -17,8 +17,10 @@ export default class Main extends Component {
       products: [],
       itemInput: '',
       priceInput: '',
-      quantityInput: '',
+      quantityInput: ''
     }
+    this.deleteItem = this.deleteItem.bind(this);
+    this.editItem = this.editItem.bind(this)
   }
 
   componentDidMount() {
@@ -49,9 +51,26 @@ export default class Main extends Component {
       })
   }
 
+  deleteItem(id){
+    axios.delete(`/api/products/${id}`).then(res =>{
+      this.setState({products: res.data})
+    })
+  }
+
+  editItem(id, item, price, quantity){
+    console.log(id, item, price, quantity)
+    const body ={
+      item: item,
+      price: price,
+      quantity: quantity
+    }
+    axios.put(`/api/products/${id}`, body).then(res =>{
+      console.log(res.data);
+      this.setState({products: res.data})
+    })
+  }
 
   render() {
-    console.log(this.state)
     let mappedProducts = this.state.products.map((e, i) => {
       return (
         <div key={i}>
@@ -59,6 +78,9 @@ export default class Main extends Component {
             product={e.item}
             price={e.price}
             quantity={e.quantity}
+            id={e.id}
+            deleteItem={this.deleteItem}
+            editItem={this.editItem}
           />
         </div>
       )
